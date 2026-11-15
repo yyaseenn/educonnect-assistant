@@ -119,7 +119,7 @@ aside > p{font-size:13px;color:var(--muted);margin:0 0 12px}
 </style>
 </head>
 <body>
-<div class="demo-banner" role="note"><strong>Working prototype</strong><span id="bannerText">So basically it searches our sample guides, Claude writes the answer from them, and the page checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.</span></div>
+<div class="demo-banner" role="note"><strong>Working prototype</strong><span id="bannerText">So basically it searches our sample guides, our AI model writes the answer from them, and the chatbot checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.</span></div>
 <div class="app">
 <main>
   <header class="top">
@@ -324,16 +324,16 @@ function handoffCard(team, topic, urgent){
     '<div class="row"><button class="small" data-req>Request contact</button></div></div>';
 }
 
-/* ---------------- Mode: live Claude or offline search ---------------- */
+/* ---------------- Mode: live AI or offline search ---------------- */
 let sample = null, LIVE = false;
 const modeEl = document.getElementById("mode");
 function setMode(m, why){
   LIVE = m === "live";
   modeEl.className = "mode " + (m === "live" ? "live" : m === "offline" ? "offline" : "");
-  modeEl.textContent = m === "live" ? "● Live AI: Claude" : m === "offline" ? "● Search mode" : "Connecting…";
-  if (m === "live") document.getElementById("hint").textContent = "Enter to send · Shift+Enter for a new line · The first question asks you to allow Claude: click Allow.";
+  modeEl.textContent = m === "live" ? "● Live AI" : m === "offline" ? "● Search mode" : "Connecting…";
+  if (m === "live") document.getElementById("hint").textContent = "Enter to send · Shift+Enter for a new line · The first question shows a permission pop-up: click Allow.";
   if (m === "offline") document.getElementById("bannerText").textContent = "Searches our sample guides and shows the matching section with its source. The guides are fictional samples, not connected to real uni systems.";
-  if (m === "live") document.getElementById("bannerText").textContent = "So basically it searches our sample guides, Claude writes the answer from them, and the page checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.";
+  if (m === "live") document.getElementById("bannerText").textContent = "So basically it searches our sample guides, our AI model writes the answer from them, and the chatbot checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.";
   if (m === "offline") document.getElementById("hint").textContent = "Enter to send · " + (why || "Search mode: answers show the matching guide text directly, with its source.");
 }
 (async () => {
@@ -388,7 +388,7 @@ async function answer(text){
 
   busy = true; sendBtn.disabled = true;
   steps({scope:"pass", retrieve:"pass", draft:"run", check:"", out:""},
-    {scope:"Passed: general question" + (removed ? " (personal details removed)" : ""), retrieve:top.map(h => h.c.id + " " + h.c.doc + " §" + h.c.sec.split(".")[0]).join(" · "), draft:"Claude is drafting from " + top.length + " passage" + (top.length > 1 ? "s" : "") + "…"});
+    {scope:"Passed: general question" + (removed ? " (personal details removed)" : ""), retrieve:top.map(h => h.c.id + " " + h.c.doc + " §" + h.c.sec.split(".")[0]).join(" · "), draft:"The AI model is drafting from " + top.length + " passage" + (top.length > 1 ? "s" : "") + "…"});
   const thinking = add('<span class="dots">Searching the guides and drafting an answer</span>', "bot", "thinking");
   const prompt =
 `You are the student support assistant for EduConnect, a university. Answer the student's question using ONLY the guide passages below.
@@ -409,8 +409,8 @@ Reply with only this JSON: {"status":"answered"|"not_in_guides"|"needs_staff","a
     thinking.remove(); busy = false; sendBtn.disabled = false;
     const code = e && e.code;
     if (["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(code)) {
-      setMode("offline", "Claude isn't available in this view, so answers show the matching guide text directly.");
-      offlineAnswer(top, "Claude not available here, showing the guide text");
+      setMode("offline", "The AI model isn't available here, so answers show the matching guide text directly.");
+      offlineAnswer(top, "AI model not available here, showing the guide text");
     } else if (code === "rate_limited") {
       add('<span class="tag hand">Busy</span><p>Too many questions in a row for the AI right now. Here\'s the guide text in the meantime, and you can try again in a bit.</p>', "bot");
       offlineAnswer(top, "AI busy, showing the guide text");
@@ -422,7 +422,7 @@ Reply with only this JSON: {"status":"answered"|"not_in_guides"|"needs_staff","a
   thinking.remove(); busy = false; sendBtn.disabled = false;
   const status = r && r.status;
   if (status === "needs_staff") {
-    steps({scope:"pass", retrieve:"pass", draft:"pass", check:"stop", out:"stop"}, {scope:"Passed the first check", retrieve:"Found " + top.length + " passage(s)", draft:"Claude flagged it as needing staff", check:"Not safe to answer automatically", out:"Routed to Student Services"});
+    steps({scope:"pass", retrieve:"pass", draft:"pass", check:"stop", out:"stop"}, {scope:"Passed the first check", retrieve:"Found " + top.length + " passage(s)", draft:"The AI model flagged it as needing staff", check:"Not safe to answer automatically", out:"Routed to Student Services"});
     add('<span class="tag hand">Handed to staff</span><p>' + esc(r.staff_reason || "This one needs a person to look at it.") + '</p>' + handoffCard("Student Services", "Needs staff review", false), "bot");
     last = null; return;
   }
@@ -432,14 +432,14 @@ Reply with only this JSON: {"status":"answered"|"not_in_guides"|"needs_staff","a
   const ok = used.length > 0 && evidenceOk(r.evidence, used);
   if (!ok) {
     steps({scope:"pass", retrieve:"pass", draft:"pass", check:"stop", out:"pass"},
-      {scope:"Passed: general question", retrieve:"Top match: " + top[0].c.doc + " §" + top[0].c.sec.split(".")[0], draft:"Claude drafted an answer", check:"Couldn't verify the draft against a passage, so it was thrown out", out:"Showed the guide text instead"});
+      {scope:"Passed: general question", retrieve:"Top match: " + top[0].c.doc + " §" + top[0].c.sec.split(".")[0], draft:"The AI model drafted an answer", check:"Couldn't verify the draft against a passage, so it was thrown out", out:"Showed the guide text instead"});
     add('<span class="tag ok">From approved guide</span><span class="tag ai">AI draft failed the check</span><p>I couldn\'t verify my draft against the guide, so here\'s exactly what the guide says instead:</p><p>' + esc(top[0].c.text) + '</p><div class="srcs">' + srcCard(top[0].c) + '</div>' + feedback(), "bot");
     last = { q: clean, a: top[0].c.text }; return;
   }
   steps({scope:"pass", retrieve:"pass", draft:"pass", check:"pass", out:"pass"},
     {scope:"Passed: general question" + (removed ? " (personal details removed)" : ""), retrieve:top.map(h => h.c.id + " " + h.c.doc + " §" + h.c.sec.split(".")[0]).join(" · "),
-     draft:"Claude drafted from " + used.map(c => c.id).join(", "), check:"Cites " + used.map(c => c.id).join(", ") + " ✓ · quoted phrase found in the guide ✓", out:"Answered with source"});
-  add('<span class="tag ok">Answered from approved guide</span><span class="tag ai">Written by Claude · checked</span>' + fmt(r.answer) +
+     draft:"The AI model drafted from " + used.map(c => c.id).join(", "), check:"Cites " + used.map(c => c.id).join(", ") + " ✓ · quoted phrase found in the guide ✓", out:"Answered with source"});
+  add('<span class="tag ok">Answered from approved guide</span><span class="tag ai">Written by our AI · checked</span>' + fmt(r.answer) +
     '<div class="srcs">' + used.map(c => srcCard(c)).join("") + '</div>' + feedback(), "bot");
   last = { q: clean, a: r.answer };
 }

@@ -16,4 +16,4 @@ On this website the assistant runs in **search mode**: answers are the matching 
 ## Important
 - All guides are **fictional sample content** made for the demo. They are not real EduConnect or UOWD policy.
 - Not connected to any real systems (no SharePoint, Zendesk or student records).
-- Built with Claude (Anthropic) for the CSIT205 group project.
+- Built for the CSIT205 group project.
