@@ -7,49 +7,58 @@
 <style>
 :root{
   --cream:#F6F2EA; --paper:#FFFDF8; --line:#E2DACB; --ink:#2B2B2B; --muted:#5E5A52;
-  --sage:#5E6B52; --sage-l:#E7EBE1; --terra:#B4573A; --terra-l:#F5E4DC; --amber:#8A6A1F; --amber-l:#F6EDD5;
+  --sage:#5E6B52; --sage-d:#4C573F; --sage-l:#E7EBE1; --terra:#B4573A; --terra-l:#F5E4DC; --amber:#8A6A1F; --amber-l:#F6EDD5;
+  --serif:Cambria,"Iowan Old Style",Georgia,serif; --sans:Calibri,"Segoe UI",Arial,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{background:var(--cream);color:var(--ink);font:15px/1.55 Calibri,"Segoe UI",Arial,sans-serif}
+body{background:var(--cream);color:var(--ink);font:15px/1.55 var(--sans)}
 button,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--terra);outline-offset:2px}
 .sr{position:absolute;left:-9999px}
-.demo-banner{background:var(--ink);color:#F6F2EA;padding:8px 20px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.demo-banner strong{color:#F2C4B2;letter-spacing:.06em;text-transform:uppercase;font-size:12px}
-.app{display:grid;grid-template-columns:minmax(0,1fr) 350px;height:calc(100% - 37px)}
-main{display:flex;flex-direction:column;min-width:0}
-header.top{padding:16px 28px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--paper)}
-.brand{font-family:Cambria,Georgia,serif;font-size:22px}
-.brand small{display:block;font-family:Calibri,Arial,sans-serif;font-size:13px;color:var(--muted)}
+svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.demo-banner{background:var(--ink);color:#EDE7DA;padding:7px 24px;font-size:13px;display:flex;gap:10px;align-items:center}
+.demo-banner strong{color:#F2C4B2;font-weight:700}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 350px;grid-template-rows:minmax(0,1fr)}
+main{display:flex;flex-direction:column;min-width:0;min-height:0}
+header.top{padding:14px 28px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:14px;background:var(--paper)}
+.brandwrap{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:40px;height:40px;stroke:none}
+.brand{font-family:var(--serif);font-size:21px;line-height:1.2}
+.brand small{display:block;font-family:var(--sans);font-size:13px;color:var(--muted)}
 .hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .mode{font-size:12.5px;font-weight:700;border-radius:14px;padding:4px 10px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
 .mode.live{background:var(--sage-l);border-color:#CFD7C4;color:var(--sage)}
 .mode.offline{background:var(--amber-l);border-color:#E8D9AE;color:var(--amber)}
-.staffbtn{background:var(--paper);border:1px solid var(--sage);color:var(--sage);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600}
+.staffbtn{display:inline-flex;gap:6px;align-items:center;background:var(--paper);border:1px solid var(--sage);color:var(--sage);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:700}
 .staffbtn:hover{background:var(--sage-l)}
-#log{flex:1;overflow-y:auto;padding:20px 28px}
-.welcome{max-width:740px}
-.welcome h1{font-family:Cambria,Georgia,serif;font-weight:normal;font-size:26px;margin:0 0 6px}
-.welcome p{color:var(--muted);margin:0 0 12px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:7px 13px;cursor:pointer}
+#log{flex:1;overflow-y:auto;padding:26px 32px;background-color:var(--cream);background-image:radial-gradient(rgba(94,107,82,.13) 1px,transparent 1.2px);background-size:22px 22px}
+.welcome{max-width:760px;margin-bottom:6px}
+.welcome h1{font-family:var(--serif);font-weight:normal;font-size:38px;line-height:1.12;margin:4px 0 10px;letter-spacing:-.01em}
+.welcome p{color:var(--muted);margin:0 0 18px;max-width:62ch;font-size:15.5px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;max-width:760px}
+.chip{display:flex;align-items:center;gap:9px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--ink)}
+.chip svg{color:var(--sage);width:18px;height:18px}
 .chip:hover{border-color:var(--sage);background:var(--sage-l)}
-.chip.sens{border-color:#E3C3B6}
-.msg{max-width:740px;margin:16px 0;display:flex}
+.chip.sens svg{color:var(--terra)}
+.chip.sens:hover{border-color:var(--terra);background:var(--terra-l)}
+.msg{max-width:760px;margin:18px 0;display:flex;gap:10px;align-items:flex-start}
 .msg.user{margin-left:auto;justify-content:flex-end}
-.bubble{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 15px;min-width:0}
-.msg.user .bubble{background:var(--sage-l);border-color:#CFD7C4}
-.who{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.msg.bot::before{content:"";flex-shrink:0;width:30px;height:30px;margin-top:2px;border-radius:9px;background:var(--sage) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 7c2.4-1 4.8-1 7 .6v10c-2.2-1.5-4.6-1.5-7-.6zM19 7c-2.4-1-4.8-1-7 .6v10c2.2-1.5 4.6-1.5 7-.6z' fill='none' stroke='%23F6F2EA' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat}
+.bubble{background:var(--paper);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 16px;min-width:0;box-shadow:0 1px 0 rgba(43,43,43,.04)}
+.msg.user .bubble{background:var(--sage);border-color:var(--sage);color:#F6F2EA;border-radius:14px 4px 14px 14px}
+.msg.user .who{color:#DCE3D3}
+.who{font-size:12px;color:var(--muted);margin-bottom:3px;font-weight:700}
 .body p{margin:6px 0}
 .body ol,.body ul{margin:6px 0 4px 20px;padding:0}
 .srcs{margin-top:10px;display:grid;gap:6px}
-.src{border:1px dashed #BFB5A2;border-radius:8px;padding:7px 10px;font-size:13px;background:#FBF8F1}
+.src{border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:13px;background:#FBF8F1}
 .src b{color:var(--sage)}
 .src details{margin-top:4px}
 .src summary{cursor:pointer;color:var(--muted);font-size:12.5px}
-.src blockquote{margin:6px 0 2px;padding:6px 10px;border-left:3px solid var(--line);background:var(--paper);font-size:13px}
-.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;border-radius:4px;padding:1px 6px;margin-right:6px}
+.src blockquote{margin:6px 0 2px;padding:6px 10px;border-left:3px solid var(--sage-l);background:var(--paper);font-size:13px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-right:6px}
 .tag.sample{background:var(--amber-l);color:var(--amber)}
 .tag.hand{background:var(--terra-l);color:var(--terra)}
 .tag.ok{background:var(--sage-l);color:var(--sage)}
@@ -64,30 +73,49 @@ header.top{padding:16px 28px 12px;border-bottom:1px solid var(--line);display:fl
 .thinking .body{color:var(--muted)}
 .dots::after{content:"";animation:dots 1.2s steps(4,end) infinite}
 @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
-.composer{padding:12px 28px 14px;border-top:1px solid var(--line);background:var(--paper)}
-.inwrap{display:flex;gap:10px;align-items:flex-end;border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 12px;background:#fff}
-textarea{flex:1;border:0;resize:none;outline:none;min-height:26px;max-height:110px;background:transparent}
-.send{background:var(--sage);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
-.send:hover{background:#4C573F}
+.composer{padding:12px 32px 14px;border-top:1px solid var(--line);background:var(--paper)}
+.inwrap{display:flex;gap:10px;align-items:flex-end;border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 14px;background:#fff}
+.inwrap:focus-within{border-color:var(--sage)}
+textarea{flex:1;border:0;resize:none;outline:none;min-height:26px;max-height:110px;background:transparent;padding:4px 0}
+.send{display:inline-flex;gap:6px;align-items:center;background:var(--sage);color:#fff;border:0;border-radius:9px;padding:8px 16px;cursor:pointer;font-weight:700}
+.send:hover{background:var(--sage-d)}
 .send:disabled{opacity:.6;cursor:default}
 .hint{font-size:12px;color:var(--muted);margin-top:6px}
-aside{border-left:1px solid var(--line);background:var(--paper);padding:18px 20px;overflow-y:auto}
-aside h2{font-family:Cambria,Georgia,serif;font-weight:normal;font-size:18px;margin:0 0 4px}
-aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
-.steps{list-style:none;margin:0;padding:0}
-.steps li{display:grid;grid-template-columns:26px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
-.steps li:last-child{border-bottom:0}
-.dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--muted)}
+aside{border-left:1px solid var(--line);background:var(--paper);padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;min-height:0}
+aside h2{font-family:var(--serif);font-weight:normal;font-size:20px;margin:0 0 4px}
+aside > p{font-size:13px;color:var(--muted);margin:0 0 12px}
+.steps{list-style:none;margin:0;padding:0;position:relative}
+.steps li{position:relative;display:grid;grid-template-columns:30px 1fr;gap:10px;padding:0 0 11px;font-size:13.5px}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:13px;top:28px;bottom:2px;width:2px;background:var(--line);transition:background .35s}
+.steps li.pass:not(:last-child)::after{background:var(--sage)}
+.steps li.stop::after{background:var(--line)}
+.dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted);transition:background .35s,border-color .35s,color .35s;position:relative;z-index:1}
 .steps li.pass .dot{border-color:var(--sage);background:var(--sage);color:#fff}
 .steps li.stop .dot{border-color:var(--terra);background:var(--terra);color:#fff}
-.steps li.run .dot{border-color:var(--amber);color:var(--amber)}
-.steps li.skip{opacity:.45}
+.steps li.run .dot{border-color:var(--amber);color:var(--amber);background:var(--amber-l)}
+.steps li.skip{opacity:.42}
+.steps b{display:block;margin-top:3px}
 .steps .d{color:var(--muted);font-size:12.5px;word-break:break-word}
-.box{margin-top:14px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px}
-.box h3{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.box ul{margin:0 0 0 16px;padding:0}
-.kbbtn{background:none;border:0;padding:0;color:var(--sage);text-decoration:underline;cursor:pointer;font-size:13px}
-@media(max-width:900px){.app{grid-template-columns:1fr;height:auto}aside{border-left:0;border-top:1px solid var(--line)}#log{min-height:60vh}}
+.box{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;background:var(--cream)}
+.box h3{margin:0 0 8px;font-size:13.5px;font-weight:700;color:var(--ink)}
+.box ul{margin:0;padding:0;list-style:none}
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pills li{display:inline-flex;gap:5px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:12.5px}
+.pills svg{color:var(--sage);width:13px;height:13px}
+.pills.off li{color:var(--muted);border-style:dashed}
+.team{margin-top:auto;padding-top:10px}
+.team h3{font-family:var(--serif);font-weight:normal;font-size:16px}
+.team .box{background:var(--paper);border-color:#CFD7C4}
+.stack{display:flex;margin:0 0 8px}
+.stack .av{margin-right:-7px;border:2px solid var(--paper)}
+.av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:700;flex-shrink:0}
+.teamlist{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.teamlist li{display:flex;align-items:center;gap:7px;font-size:13px;min-width:0}
+.teamlist .av{width:24px;height:24px;font-size:10px}
+.team .note{margin-top:7px}
+@media(max-width:900px){body{height:auto;display:block}.app{display:block}main{height:100vh;height:100dvh}aside{border-left:0;border-top:1px solid var(--line)}#log{padding:20px}.welcome h1{font-size:30px}.composer{padding:12px 16px}}
+@media(max-width:600px){.demo-banner{display:block;padding:7px 16px}.demo-banner strong{margin-right:6px}header.top{flex-direction:column;align-items:stretch;padding:12px 16px}.brand small{display:none}.brand{font-size:19px}.hdr-right{justify-content:space-between}.chips{grid-template-columns:1fr 1fr}.chip{padding:8px 10px;font-size:14px}.welcome h1{font-size:27px}#log{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -95,28 +123,17 @@ aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
 <div class="app">
 <main>
   <header class="top">
-    <div class="brand">EduConnect Student Assistant<small>General questions about enrolment, timetables, learning materials, IT, library, exams and fees</small></div>
+    <div class="brandwrap"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H17l-7 6v-6a4 4 0 0 1-4-4z" fill="#5E6B52"/><path d="M12 11.5c2.6-1 5.4-1 8 .6v10c-2.6-1.5-5.4-1.5-8-.6zM28 11.5c-2.6-1-5.4-1-8 .6v10c2.6-1.5 5.4-1.5 8-.6z" fill="none" stroke="#F6F2EA" stroke-width="1.6" stroke-linejoin="round"/></svg><div class="brand">EduConnect Student Assistant<small>Enrolment, timetables, learning materials, IT, library, exams and fees</small></div></div>
     <div class="hdr-right">
       <span class="mode" id="mode" aria-live="polite">Starting…</span>
-      <button class="staffbtn" id="staffTop">Talk to a person</button>
+      <button class="staffbtn" id="staffTop"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.5 4-5 7-5s5.8 1.5 7 5"/></svg> Talk to a person</button>
     </div>
   </header>
   <div id="log" role="log" aria-live="polite" aria-label="Conversation">
     <section class="welcome">
       <h1>Hi, what do you need help with?</h1>
-      <p>Ask me anything general and I'll answer from EduConnect's approved guides, with the source every time. I can't see your grades, fees or personal records. For anything personal or sensitive I'll connect you with staff. Please don't type personal details.</p>
-      <div class="chips" aria-label="Example questions">
-        <button class="chip" data-q="When can I see my class timetable?">Class timetable</button>
-        <button class="chip" data-q="Is it too late to drop a subject in week 5?">Dropping a subject late</button>
-        <button class="chip" data-q="My lecture recording isn't showing up, what do I do?">Missing recording</button>
-        <button class="chip" data-q="How do I set up MFA on my student account?">MFA setup</button>
-        <button class="chip" data-q="How many books can I borrow and for how long?">Library borrowing</button>
-        <button class="chip" data-q="What should I bring to my exam?">Exam day</button>
-        <button class="chip sens" data-q="I want to appeal my final grade">Grade appeal</button>
-        <button class="chip sens" data-q="What is my GPA?">My GPA</button>
-        <button class="chip sens" data-q="I've been feeling really stressed and overwhelmed">Feeling overwhelmed</button>
-        <button class="chip" data-q="Can I bring my cat to campus?">Something not in the guides</button>
-      </div>
+      <p>Ask me anything general and I'll answer from EduConnect's approved guides, with the source every time. I can't see your grades, fees or personal records, so for anything personal or sensitive I'll connect you with staff. Please don't type personal details.</p>
+      <div class="chips" aria-label="Example questions"><button class="chip" data-q="When can I see my class timetable?"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Class timetable</span></button><button class="chip" data-q="Is it too late to drop a subject in week 5?"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg><span>Dropping a subject late</span></button><button class="chip" data-q="My lecture recording isn't showing up, what do I do?"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/></svg><span>Missing recording</span></button><button class="chip" data-q="How do I set up MFA on my student account?"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H20M17 12v3M20 12v2"/></svg><span>MFA setup</span></button><button class="chip" data-q="How many books can I borrow and for how long?"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6v13c-2.5-1.5-5.5-1.5-8-.5zM20 5.5C17.5 4.5 14.5 4.5 12 6v13c2.5-1.5 5.5-1.5 8-.5z"/></svg><span>Library borrowing</span></button><button class="chip" data-q="What should I bring to my exam?"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg><span>Exam day</span></button><button class="chip sens" data-q="I want to appeal my final grade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Grade appeal</span></button><button class="chip sens" data-q="What is my GPA?"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.5 4-5 7-5s5.8 1.5 7 5"/></svg><span>My GPA</span></button><button class="chip sens" data-q="I've been feeling really stressed and overwhelmed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Feeling overwhelmed</span></button><button class="chip" data-q="Can I bring my cat to campus?"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4M12 16.8v.2"/></svg><span>Something not in the guides</span></button></div>
     </section>
   </div>
   <div class="composer">
@@ -130,7 +147,7 @@ aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
 </main>
 <aside aria-label="How the answer was produced">
   <h2>How this answer was produced</h2>
-  <p>This is our technical workflow running for real. It updates for every question.</p>
+  <p>Our technical workflow, running live for every question.</p>
   <ol class="steps" id="steps">
     <li data-k="scope"><span class="dot">1</span><div><b>Scope &amp; privacy check</b><div class="d" data-d>Is this a general question we're allowed to answer?</div></div></li>
     <li data-k="retrieve"><span class="dot">2</span><div><b>Search approved guides</b><div class="d" data-d>Ranked search over the sample guides only</div></div></li>
@@ -139,14 +156,16 @@ aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
     <li data-k="out"><span class="dot">5</span><div><b>Answer or hand off</b><div class="d" data-d>Reply with source, or route to staff</div></div></li>
   </ol>
   <div class="box">
-    <h3>Sample knowledge base</h3>
-    <ul id="kblist"></ul>
-    <div class="note">All of these are fictional guides made for this demo, so they're not real EduConnect or UOWD policy.</div>
+    <h3>Sample guides it searches</h3>
+    <ul id="kblist" class="pills"></ul>
+    <div class="note">Fictional guides made for this demo, not real policy. Not connected to SharePoint, Zendesk or student records yet; that needs approval first.</div>
   </div>
-  <div class="box">
-    <h3>Not connected</h3>
-    <ul><li>SharePoint / learning platforms</li><li>Zendesk ticketing</li><li>Student records</li></ul>
-    <div class="note">The CTO told us EduConnect already has Zendesk and SharePoint. Hooking them up is just our proposal and would need security and access approval first.</div>
+  <div class="team">
+    <div class="box">
+      <h3>Made by our team</h3>
+      <ul class="teamlist"><li><span class="av" style="background:#5E6B52">Y</span>Yaseen</li><li><span class="av" style="background:#B4573A">LB</span>Lamees Bakhit</li><li><span class="av" style="background:#8A6A1F">LA</span>Lily Ahmed</li><li><span class="av" style="background:#6F7F8C">GM</span>George Mousa</li><li><span class="av" style="background:#7A5C6E">A</span>Abdulrahman</li></ul>
+      <div class="note">CSIT205 Generative AI, Assignment 2, UOWD Autumn 2026</div>
+    </div>
   </div>
 </aside>
 </div>
@@ -202,7 +221,7 @@ const KB = [
 ];
 const CH = [];
 KB.forEach((d, di) => d.sections.forEach((s, si) => CH.push({ id:"", doc:d.doc, owner:d.owner, rev:d.rev, sec:(si+1)+". "+s.t, text:s.x })));
-document.getElementById('kblist').innerHTML = KB.map(d => '<li>'+esc(d.doc)+' <span style="color:var(--muted)">('+d.sections.length+' sections)</span></li>').join('');
+document.getElementById('kblist').innerHTML = KB.map(d => '<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6v13c-2.5-1.5-5.5-1.5-8-.5zM20 5.5C17.5 4.5 14.5 4.5 12 6v13c2.5-1.5 5.5-1.5 8-.5z"/></svg><span>'+esc(d.doc)+'</span></li>').join('');
 
 /* ---------------- Search (BM25 with light stemming + synonyms) ---------------- */
 const STOP = new Set("a an the and or but if of to in on at for from by with about into over after before is are was were be been being am do does did doing have has had i me my we our you your it its this that these those what which who whom when where why how can could should would will shall may might must not no yes so than too very just also there here get got any some all each more most other such only own same up down out off again then once please thanks hi hello hey im dont cant isnt whats".split(" "));
@@ -283,7 +302,7 @@ function fmt(t){
 }
 function add(html, who, extra){
   const m = document.createElement("div"); m.className = "msg " + who + (extra ? " " + extra : "");
-  m.innerHTML = '<div class="bubble"><div class="who">' + (who === "user" ? "You" : "EduConnect Assistant") + '</div><div class="body">' + html + "</div></div>";
+  m.innerHTML = '<div class="bubble"><div class="who">' + (who === "user" ? "You" : "EduConnect assistant") + '</div><div class="body">' + html + "</div></div>";
   log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
 }
 const DEF = {scope:"Is this a general question we're allowed to answer?", retrieve:"Ranked search over the sample guides only", draft:"AI writes from the matched passages only", check:"Does the answer cite and quote a real passage?", out:"Reply with source, or route to staff"};
