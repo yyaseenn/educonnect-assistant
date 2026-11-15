@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduConnect Student Assistant: working prototype (CSIT205)</title>
+<style>
+:root{
+  --cream:#F6F2EA; --paper:#FFFDF8; --line:#E2DACB; --ink:#2B2B2B; --muted:#5E5A52;
+  --sage:#5E6B52; --sage-l:#E7EBE1; --terra:#B4573A; --terra-l:#F5E4DC; --amber:#8A6A1F; --amber-l:#F6EDD5;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--cream);color:var(--ink);font:15px/1.55 Calibri,"Segoe UI",Arial,sans-serif}
+button,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--terra);outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+.demo-banner{background:var(--ink);color:#F6F2EA;padding:8px 20px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.demo-banner strong{color:#F2C4B2;letter-spacing:.06em;text-transform:uppercase;font-size:12px}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 350px;height:calc(100% - 37px)}
+main{display:flex;flex-direction:column;min-width:0}
+header.top{padding:16px 28px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--paper)}
+.brand{font-family:Cambria,Georgia,serif;font-size:22px}
+.brand small{display:block;font-family:Calibri,Arial,sans-serif;font-size:13px;color:var(--muted)}
+.hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.mode{font-size:12.5px;font-weight:700;border-radius:14px;padding:4px 10px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+.mode.live{background:var(--sage-l);border-color:#CFD7C4;color:var(--sage)}
+.mode.offline{background:var(--amber-l);border-color:#E8D9AE;color:var(--amber)}
+.staffbtn{background:var(--paper);border:1px solid var(--sage);color:var(--sage);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600}
+.staffbtn:hover{background:var(--sage-l)}
+#log{flex:1;overflow-y:auto;padding:20px 28px}
+.welcome{max-width:740px}
+.welcome h1{font-family:Cambria,Georgia,serif;font-weight:normal;font-size:26px;margin:0 0 6px}
+.welcome p{color:var(--muted);margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:7px 13px;cursor:pointer}
+.chip:hover{border-color:var(--sage);background:var(--sage-l)}
+.chip.sens{border-color:#E3C3B6}
+.msg{max-width:740px;margin:16px 0;display:flex}
+.msg.user{margin-left:auto;justify-content:flex-end}
+.bubble{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 15px;min-width:0}
+.msg.user .bubble{background:var(--sage-l);border-color:#CFD7C4}
+.who{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.body p{margin:6px 0}
+.body ol,.body ul{margin:6px 0 4px 20px;padding:0}
+.srcs{margin-top:10px;display:grid;gap:6px}
+.src{border:1px dashed #BFB5A2;border-radius:8px;padding:7px 10px;font-size:13px;background:#FBF8F1}
+.src b{color:var(--sage)}
+.src details{margin-top:4px}
+.src summary{cursor:pointer;color:var(--muted);font-size:12.5px}
+.src blockquote{margin:6px 0 2px;padding:6px 10px;border-left:3px solid var(--line);background:var(--paper);font-size:13px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;border-radius:4px;padding:1px 6px;margin-right:6px}
+.tag.sample{background:var(--amber-l);color:var(--amber)}
+.tag.hand{background:var(--terra-l);color:var(--terra)}
+.tag.ok{background:var(--sage-l);color:var(--sage)}
+.tag.ai{background:#EDE7DA;color:var(--ink)}
+.handoff{margin-top:10px;border:1px solid #E3C3B6;background:var(--terra-l);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.handoff h3{margin:0 0 4px;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.small{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:13px;cursor:pointer}
+.small:hover{border-color:var(--sage)}
+.small:disabled{opacity:.55;cursor:default}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.thinking .body{color:var(--muted)}
+.dots::after{content:"";animation:dots 1.2s steps(4,end) infinite}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+.composer{padding:12px 28px 14px;border-top:1px solid var(--line);background:var(--paper)}
+.inwrap{display:flex;gap:10px;align-items:flex-end;border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 12px;background:#fff}
+textarea{flex:1;border:0;resize:none;outline:none;min-height:26px;max-height:110px;background:transparent}
+.send{background:var(--sage);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+.send:hover{background:#4C573F}
+.send:disabled{opacity:.6;cursor:default}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+aside{border-left:1px solid var(--line);background:var(--paper);padding:18px 20px;overflow-y:auto}
+aside h2{font-family:Cambria,Georgia,serif;font-weight:normal;font-size:18px;margin:0 0 4px}
+aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:grid;grid-template-columns:26px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.steps li:last-child{border-bottom:0}
+.dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--muted)}
+.steps li.pass .dot{border-color:var(--sage);background:var(--sage);color:#fff}
+.steps li.stop .dot{border-color:var(--terra);background:var(--terra);color:#fff}
+.steps li.run .dot{border-color:var(--amber);color:var(--amber)}
+.steps li.skip{opacity:.45}
+.steps .d{color:var(--muted);font-size:12.5px;word-break:break-word}
+.box{margin-top:14px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px}
+.box h3{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.box ul{margin:0 0 0 16px;padding:0}
+.kbbtn{background:none;border:0;padding:0;color:var(--sage);text-decoration:underline;cursor:pointer;font-size:13px}
+@media(max-width:900px){.app{grid-template-columns:1fr;height:auto}aside{border-left:0;border-top:1px solid var(--line)}#log{min-height:60vh}}
+</style>
+</head>
+<body>
+<div class="demo-banner" role="note"><strong>Working prototype</strong><span id="bannerText">So basically it searches our sample guides, Claude writes the answer from them, and the page checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.</span></div>
+<div class="app">
+<main>
+  <header class="top">
+    <div class="brand">EduConnect Student Assistant<small>General questions about enrolment, timetables, learning materials, IT, library, exams and fees</small></div>
+    <div class="hdr-right">
+      <span class="mode" id="mode" aria-live="polite">Starting…</span>
+      <button class="staffbtn" id="staffTop">Talk to a person</button>
+    </div>
+  </header>
+  <div id="log" role="log" aria-live="polite" aria-label="Conversation">
+    <section class="welcome">
+      <h1>Hi, what do you need help with?</h1>
+      <p>Ask me anything general and I'll answer from EduConnect's approved guides, with the source every time. I can't see your grades, fees or personal records. For anything personal or sensitive I'll connect you with staff. Please don't type personal details.</p>
+      <div class="chips" aria-label="Example questions">
+        <button class="chip" data-q="When can I see my class timetable?">Class timetable</button>
+        <button class="chip" data-q="Is it too late to drop a subject in week 5?">Dropping a subject late</button>
+        <button class="chip" data-q="My lecture recording isn't showing up, what do I do?">Missing recording</button>
+        <button class="chip" data-q="How do I set up MFA on my student account?">MFA setup</button>
+        <button class="chip" data-q="How many books can I borrow and for how long?">Library borrowing</button>
+        <button class="chip" data-q="What should I bring to my exam?">Exam day</button>
+        <button class="chip sens" data-q="I want to appeal my final grade">Grade appeal</button>
+        <button class="chip sens" data-q="What is my GPA?">My GPA</button>
+        <button class="chip sens" data-q="I've been feeling really stressed and overwhelmed">Feeling overwhelmed</button>
+        <button class="chip" data-q="Can I bring my cat to campus?">Something not in the guides</button>
+      </div>
+    </section>
+  </div>
+  <div class="composer">
+    <div class="inwrap">
+      <label for="q" class="sr">Type your question</label>
+      <textarea id="q" rows="1" placeholder="Ask a general question (please don't include personal details)"></textarea>
+      <button class="send" id="send">Send</button>
+    </div>
+    <div class="hint" id="hint">Enter to send · Shift+Enter for a new line</div>
+  </div>
+</main>
+<aside aria-label="How the answer was produced">
+  <h2>How this answer was produced</h2>
+  <p>This is our technical workflow running for real. It updates for every question.</p>
+  <ol class="steps" id="steps">
+    <li data-k="scope"><span class="dot">1</span><div><b>Scope &amp; privacy check</b><div class="d" data-d>Is this a general question we're allowed to answer?</div></div></li>
+    <li data-k="retrieve"><span class="dot">2</span><div><b>Search approved guides</b><div class="d" data-d>Ranked search over the sample guides only</div></div></li>
+    <li data-k="draft"><span class="dot">3</span><div><b>Draft answer</b><div class="d" data-d>Claude writes from the matched passages only</div></div></li>
+    <li data-k="check"><span class="dot">4</span><div><b>Check against source</b><div class="d" data-d>Does the answer cite and quote a real passage?</div></div></li>
+    <li data-k="out"><span class="dot">5</span><div><b>Answer or hand off</b><div class="d" data-d>Reply with source, or route to staff</div></div></li>
+  </ol>
+  <div class="box">
+    <h3>Sample knowledge base</h3>
+    <ul id="kblist"></ul>
+    <div class="note">All of these are fictional guides made for this demo, so they're not real EduConnect or UOWD policy.</div>
+  </div>
+  <div class="box">
+    <h3>Not connected</h3>
+    <ul><li>SharePoint / learning platforms</li><li>Zendesk ticketing</li><li>Student records</li></ul>
+    <div class="note">The CTO told us EduConnect already has Zendesk and SharePoint. Hooking them up is just our proposal and would need security and access approval first. In the real pilot the model would be the shortlisted Azure OpenAI deployment; this demo uses Claude.</div>
+  </div>
+</aside>
+</div>
+<script>
+"use strict";
+/* ---------------- Sample knowledge base (fictional) ---------------- */
+const KB = [
+ {doc:"Timetable FAQ", owner:"Academic Administration", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Finding your timetable", x:"Your personal class timetable is published in the Student Portal under My Studies > Timetable about two weeks before semester starts. It only shows subjects you are enrolled in, so enrol first. You can export it to Outlook or Google Calendar with the Export button."},
+  {t:"Timetable changes during semester", x:"If a class time or room changes, the new details appear in the portal straight away and an email is sent to your student email account. Check the portal before your first class each week, especially in Weeks 1 and 2."},
+  {t:"Timetable clashes", x:"If two of your classes clash, submit the Timetable Clash form in the portal within the first two weeks of semester. Academic Administration will offer you an alternative tutorial or lab where one is available."},
+  {t:"Finding rooms", x:"Room codes show the block and floor, for example 2.14 is Block 2, level 1, room 14. Campus maps are available at the main reception and in the portal under Campus Life."}
+ ]},
+ {doc:"Enrolment changes guide", owner:"Academic Administration", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Add/drop period", x:"You can add or drop subjects yourself in the Student Portal during the first two weeks of semester. Open My Studies > Enrolment, select the subject, then choose Add or Drop. You will get a confirmation email."},
+  {t:"After the add/drop deadline", x:"After Week 2 you cannot drop a subject yourself. You can still withdraw without academic penalty until the end of Week 6 by submitting a Withdrawal Request in the portal. Fees may still apply, so check the Fees and payments guide."},
+  {t:"Withdrawal after Week 6", x:"Withdrawing after Week 6 normally results in a fail grade unless you have serious circumstances outside your control. These requests are reviewed by Academic Administration staff, so contact Student Services for advice."},
+  {t:"Study load", x:"A full-time load is four subjects per semester. Taking a fifth subject needs approval from your program coordinator, which you request through the portal before the add/drop deadline."}
+ ]},
+ {doc:"Learning platform guide", owner:"Learning Technology team", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Finding subject content", x:"Lecture slides, readings and announcements are posted by your subject coordinator on the learning platform, inside each subject's page. Subject pages open one week before semester starts."},
+  {t:"Lecture recordings", x:"Recordings usually appear within 48 hours of the lecture under the Recordings tab of the subject page. If a recording is still missing after 48 hours, report it to the Learning Technology team using the Help button on the platform."},
+  {t:"Missing subject page", x:"If a subject page is missing, first check that you are enrolled in that subject in the Student Portal. Enrolment changes can take up to 24 hours to appear on the learning platform."},
+  {t:"Submitting assignments online", x:"Submit assignments through the Assignment link on the subject page before the due time shown. You receive a submission receipt by email. If the platform is down near a deadline, take a screenshot and email your subject coordinator straight away."}
+ ]},
+ {doc:"IT account help", owner:"IT Support", rev:"Updated when needed (last: Week 1, Autumn 2026)", sections:[
+  {t:"Password reset", x:"Reset your password through the IT self-service page by choosing Reset password. The reset link is sent to your student email or the personal email you registered. After resetting, wait 10 minutes before signing in to the learning platform. Never share your password with anyone, including staff."},
+  {t:"Setting up MFA", x:"Multi-factor authentication (MFA) is required for all student accounts. Install the Microsoft Authenticator app, sign in at the IT self-service page, choose Security info > Add method, and scan the QR code. If you change phones, set up the new phone before resetting the old one."},
+  {t:"Campus Wi-Fi", x:"Connect to the EduConnect-Student network and sign in with your student email and password. Guests can use EduConnect-Guest, which needs a code from reception."},
+  {t:"Free software", x:"Students get Microsoft 365 apps free while enrolled. Sign in at office.com with your student email to download them on up to five devices."}
+ ]},
+ {doc:"Library guide", owner:"Library", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Opening hours", x:"During semester the library is open 8am to 10pm Monday to Thursday, 8am to 6pm Friday, and 10am to 6pm Saturday. Hours change during exam weeks and breaks, and the current hours are posted on the library page."},
+  {t:"Borrowing", x:"Students can borrow up to 10 items at a time. Standard loans are for 14 days and can be renewed twice online if nobody else has reserved the item. High-demand items are 2-day loans."},
+  {t:"Study room bookings", x:"Group study rooms can be booked for up to 2 hours per day through the library booking page. Bookings open 7 days ahead and are released if you are more than 15 minutes late."},
+  {t:"Off-campus database access", x:"You can use library databases from home by signing in with your student email when prompted. If a database will not load, clear your browser cache or use the library's Ask a Librarian chat."}
+ ]},
+ {doc:"Exams guide", owner:"Examinations Office", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Exam timetable", x:"The final exam timetable is published in the Student Portal in Week 8. It shows the date, time and room for each of your exams. Check it again in Week 11 in case of changes."},
+  {t:"What to bring", x:"Bring your student ID card, pens and any equipment your subject allows, such as an approved calculator. Phones and smart watches must be switched off and left in your bag at the front of the room. Arrive 20 minutes early."},
+  {t:"Missing an exam", x:"If illness or another serious problem stops you from sitting an exam, apply for a deferred exam in the portal within 3 working days with supporting documents. Each request is decided by Examinations Office staff, not automatically."}
+ ]},
+ {doc:"Fees and payments guide", owner:"Finance Office", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Where to see your fees", x:"Your fee statement is in the Student Portal under Finance > My Statement. The assistant cannot see your balance, so check the portal or contact the Finance Office."},
+  {t:"Payment methods and due dates", x:"Fees can be paid online by card or bank transfer through the portal. Semester fees are due by the end of Week 3 unless you have an approved payment plan."},
+  {t:"Payment plans", x:"If you cannot pay the full amount by the due date, you can request a payment plan through the portal before the end of Week 2. The Finance Office reviews each request individually."}
+ ]},
+ {doc:"Student Services contacts", owner:"Student Services", rev:"Week 1, Autumn 2026", sections:[
+  {t:"Opening hours and contact", x:"Student Services is open 8:30am to 5pm Sunday to Thursday at the main reception, and online through the portal's Ask Us form. Most Ask Us questions are answered within two working days."},
+  {t:"Wellbeing support", x:"The Student Wellbeing team offers free and confidential counselling. You can book through the portal or walk in during opening hours. In an emergency, contact emergency services (999 police, 998 ambulance in the UAE)."},
+  {t:"Appeals and complaints", x:"Appeals about grades and formal complaints are handled by Academic Administration staff, not the assistant. Start by talking to your subject coordinator, then submit an appeal through the portal within 10 working days of results being released."}
+ ]}
+];
+const CH = [];
+KB.forEach((d, di) => d.sections.forEach((s, si) => CH.push({ id:"", doc:d.doc, owner:d.owner, rev:d.rev, sec:(si+1)+". "+s.t, text:s.x })));
+document.getElementById('kblist').innerHTML = KB.map(d => '<li>'+esc(d.doc)+' <span style="color:var(--muted)">('+d.sections.length+' sections)</span></li>').join('');
+
+/* ---------------- Search (BM25 with light stemming + synonyms) ---------------- */
+const STOP = new Set("a an the and or but if of to in on at for from by with about into over after before is are was were be been being am do does did doing have has had i me my we our you your it its this that these those what which who whom when where why how can could should would will shall may might must not no yes so than too very just also there here get got any some all each more most other such only own same up down out off again then once please thanks hi hello hey im dont cant isnt whats".split(" "));
+function stem(w){
+  if (w.length > 5 && w.endsWith("ing")) w = w.slice(0, -3);
+  else if (w.length > 4 && w.endsWith("ed")) w = w.slice(0, -2);
+  if (w.length > 4 && w.endsWith("ies")) w = w.slice(0, -3) + "y";
+  else if (w.length > 3 && w.endsWith("es") && !w.endsWith("ses")) w = w.slice(0, -2);
+  else if (w.length > 3 && w.endsWith("s") && !w.endsWith("ss")) w = w.slice(0, -1);
+  return w;
+}
+const SYN = {
+  schedule:["timetable"], class:["timetable"], classes:["timetable"], calendar:["timetable"],
+  drop:["withdraw","enrolment"], withdraw:["drop","withdrawal"], unenrol:["drop","withdraw"], enrol:["enrolment"], enroll:["enrolment"], register:["enrolment"], late:["after","deadline"],
+  login:["password","sign"], log:["password","sign"], locked:["password","reset"], forgot:["password","reset"], mfa:["authentication","authenticator"], "2fa":["authentication","mfa"], authenticator:["mfa"],
+  wifi:["wi","fi","network"], internet:["wi","fi","network"], office:["microsoft","365"], word:["microsoft","365"],
+  moodle:["learning","platform"], recording:["recordings","lecture"], video:["recording"], slides:["subject","content"], notes:["subject","content"], assignment:["submit","submitting"], upload:["submit"],
+  book:["borrow","library"], books:["borrow","library"], loan:["borrow"], renew:["borrow"], room:["rooms"], database:["databases"],
+  exam:["exams"], test:["exam"], final:["exam"], sick:["illness","missing","deferred"], deferred:["missing"],
+  fee:["fees","payment"], tuition:["fees"], pay:["payment","fees","card","online"], installment:["payment","plan"],
+  see:["published","find"], view:["published","find"], "5":["fifth","load"], five:["fifth","load"], overload:["fifth","load"], extra:["fifth"],
+  close:["opening","hours"], closing:["opening","hours"], opens:["opening","hours"], hours:["opening"],
+  counselling:["wellbeing"], counseling:["wellbeing"], contact:["contact","hours"], open:["opening","hours"]
+};
+function toks(s){ return (String(s).toLowerCase().replace(/wi-fi/g,"wifi").match(/[a-z0-9]+/g) || []).filter(w => !STOP.has(w)).map(stem); }
+function qtoks(s){
+  const raw = (String(s).toLowerCase().replace(/wi-fi/g,"wifi").replace(/\bweek\s*(\d+)/g,"week$1").match(/[a-z0-9]+/g) || []).filter(w => !STOP.has(w));
+  const out = raw.map(stem);
+  raw.forEach(w => (SYN[w] || SYN[stem(w)] || []).forEach(x => out.push(stem(x))));
+  return [...new Set(out)];
+}
+const DT = CH.map(c => toks(c.doc + " " + c.sec + " " + c.sec + " " + c.text));
+const TF = DT.map(t => { const m = {}; t.forEach(w => m[w] = (m[w] || 0) + 1); return m; });
+const DF = {}; DT.forEach(t => new Set(t).forEach(w => DF[w] = (DF[w] || 0) + 1));
+const AVG = DT.reduce((a, t) => a + t.length, 0) / DT.length, K1 = 1.4, B = 0.7, NDOC = DT.length;
+function search(q){
+  const qt = qtoks(q);
+  return CH.map((c, i) => {
+    let s = 0;
+    qt.forEach(t => { const f = TF[i][t]; if (!f) return; const idf = Math.log(1 + (NDOC - DF[t] + 0.5) / (DF[t] + 0.5)); s += idf * f * (K1 + 1) / (f + K1 * (1 - B + B * DT[i].length / AVG)); });
+    return { c, s };
+  }).sort((a, b) => b.s - a.s);
+}
+function coverage(q, c){
+  const orig = [...new Set((String(q).toLowerCase().replace(/wi-fi/g,"wifi").match(/[a-z0-9]+/g) || []).filter(w => !STOP.has(w)))];
+  if (!orig.length) return 0;
+  const i = CH.indexOf(c);
+  return orig.filter(w => TF[i][stem(w)] || (SYN[w] || []).some(x => TF[i][stem(x)])).length / orig.length;
+}
+function isFound(q, h){ return h.s >= FOUND && (h.s >= 7 || coverage(q, h.c) >= 0.5); }
+const FOUND = 3.2;   // minimum score to count as "found in the guides"
+
+/* ---------------- Gate rules ---------------- */
+const GATE = [
+  {k:"urgent", re:/suicid|kill myself|self.?harm|hurt myself|end my life|i('m| am) (not )?safe|in danger/i, team:"Student Wellbeing team", topic:"Urgent wellbeing", urgent:true,
+   why:"This sounds really serious, and you deserve to talk to a real person right now. The assistant can't help with this, but people can."},
+  {k:"wellbeing", re:/stress|overwhelm|anxious|anxiety|depress|wellbeing|well-being|mental health|lonely|can'?t cope|panic|burn ?out/i, team:"Student Wellbeing team", topic:"Wellbeing", urgent:true,
+   why:"Wellbeing concerns should always go to a person, not an automated system. The Wellbeing team is free and confidential."},
+  {k:"appeal", re:/appeal|complain|complaint|unfair|misconduct|plagiar|cheat/i, team:"Academic Administration (appeals)", topic:"Academic appeal or complaint",
+   why:"Appeals and complaints are decisions about your academic record, so the assistant isn't allowed to advise on them."},
+  {k:"personal", re:/\bmy (gpa|grades?|marks?|results?|transcript|record|balance|invoice|debt|attendance|wam)\b|\bgpa\b|how much do i owe|did i pass|refund|visa status/i, team:"Student Services", topic:"Personal record enquiry",
+   why:"This needs your personal record. Version one of the assistant has no access to grades, fees or student records, by design."}
+];
+const PII = [[/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g, "[email removed]"], [/\+?\d[\d\s-]{8,}\d/g, "[number removed]"], [/\b\d{7,8}\b/g, "[ID removed]"]];
+
+/* ---------------- UI helpers ---------------- */
+const log = document.getElementById("log"), q = document.getElementById("q"), sendBtn = document.getElementById("send");
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmt(t){
+  const lines = String(t).trim().split(/\n+/); let html = "", list = null;
+  for (const raw of lines) {
+    const l = raw.trim(); const m = l.match(/^(\d+[.)]|[-*•])\s+(.*)$/);
+    if (m) { const tag = /\d/.test(m[1]) ? "ol" : "ul"; if (list !== tag) { if (list) html += "</" + list + ">"; html += "<" + tag + ">"; list = tag; } html += "<li>" + esc(m[2]) + "</li>"; }
+    else { if (list) { html += "</" + list + ">"; list = null; } html += "<p>" + esc(l) + "</p>"; }
+  }
+  if (list) html += "</" + list + ">";
+  return html.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+}
+function add(html, who, extra){
+  const m = document.createElement("div"); m.className = "msg " + who + (extra ? " " + extra : "");
+  m.innerHTML = '<div class="bubble"><div class="who">' + (who === "user" ? "You" : "EduConnect Assistant") + '</div><div class="body">' + html + "</div></div>";
+  log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
+}
+const DEF = {scope:"Is this a general question we're allowed to answer?", retrieve:"Ranked search over the sample guides only", draft:"Claude writes from the matched passages only", check:"Does the answer cite and quote a real passage?", out:"Reply with source, or route to staff"};
+function steps(states, notes){
+  document.querySelectorAll("#steps li").forEach(li => {
+    const k = li.dataset.k; li.className = states[k] || "";
+    li.querySelector("[data-d]").textContent = (notes && notes[k]) || DEF[k];
+  });
+}
+function srcCard(c, label){
+  return '<div class="src"><span class="tag sample">' + esc(label || "Sample source") + '</span><b>' + esc(c.doc) + ' · section ' + esc(c.sec) + '</b><br>Owner: ' + esc(c.owner) + ' · Last reviewed: ' + esc(c.rev) +
+    '<details><summary>Show the guide text</summary><blockquote>' + esc(c.text) + '</blockquote></details></div>';
+}
+function feedback(){ return '<div class="row"><button class="small" data-fb="up">Helpful</button><button class="small" data-fb="down">Not right / out of date</button><button class="small" data-staff>Talk to a person</button></div>'; }
+function handoffCard(team, topic, urgent){
+  return '<div class="handoff"><h3>Connect with ' + esc(team) + '</h3>' +
+    (urgent ? '<p style="margin:0 0 6px"><b>If you are in danger or need urgent help right now, contact emergency services (999 police / 998 ambulance in the UAE).</b></p>' : '') +
+    'With your OK, staff would receive only your question text and the topic <i>"' + esc(topic) + '"</i>. Your grades and records are <b>not</b> attached.' +
+    '<div class="row"><button class="small" data-req>Request contact</button></div></div>';
+}
+
+/* ---------------- Mode: live Claude or offline search ---------------- */
+let sample = null, LIVE = false;
+const modeEl = document.getElementById("mode");
+function setMode(m, why){
+  LIVE = m === "live";
+  modeEl.className = "mode " + (m === "live" ? "live" : m === "offline" ? "offline" : "");
+  modeEl.textContent = m === "live" ? "● Live AI: Claude" : m === "offline" ? "● Search mode" : "Connecting…";
+  if (m === "live") document.getElementById("hint").textContent = "Enter to send · Shift+Enter for a new line · The first question asks you to allow Claude: click Allow.";
+  if (m === "offline") document.getElementById("bannerText").textContent = "Website version: it really searches our sample guides and shows the matching guide text with its source. (In the claude.ai version, Claude also writes the answer.) The guides are fictional samples, and nothing's connected to real uni systems.";
+  if (m === "live") document.getElementById("bannerText").textContent = "So basically it searches our sample guides, Claude writes the answer from them, and the page checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.";
+  if (m === "offline") document.getElementById("hint").textContent = "Enter to send · " + (why || "Search mode: answers show the matching guide text directly, with its source.");
+}
+(async () => {
+  if (window.claude && typeof window.claude.use === "function") {
+    setMode("connecting");
+    try { sample = await window.claude.use("sample"); } catch (e) { sample = null; }
+  }
+  setMode(sample ? "live" : "offline");
+})();
+
+/* ---------------- Main flow ---------------- */
+let last = null, busy = false;
+function evidenceOk(ev, passages){
+  const et = (String(ev || "").toLowerCase().match(/[a-z0-9]+/g) || []);
+  if (et.length < 3) return false;
+  return passages.some(p => { const pt = new Set(p.text.toLowerCase().match(/[a-z0-9]+/g) || []); return et.filter(w => pt.has(w)).length / et.length >= 0.8; });
+}
+function offlineAnswer(hits, why){
+  const top = hits[0].c;
+  steps({scope:"pass", retrieve:"pass", draft:"skip", check:"pass", out:"pass"},
+    {scope:"Passed: general question", retrieve:"Top match: " + top.doc + " §" + top.sec.split(".")[0] + " (score " + hits[0].s.toFixed(1) + ")", draft: why || "Offline: no AI, showing the guide text itself", check:"Text comes straight from the approved guide", out:"Answered with source"});
+  add('<span class="tag ok">From approved guide</span><span class="tag ai">Guide text, not AI-written</span><p>Here\'s what the guide says:</p><p>' + esc(top.text) + '</p><div class="srcs">' + srcCard(top) + '</div>' + feedback(), "bot");
+}
+function notFound(score){
+  steps({scope:"pass", retrieve:"stop", draft:"skip", check:"skip", out:"stop"},
+    {scope:"Passed: general question", retrieve:"Nothing relevant in the approved guides (best score " + score.toFixed(1) + ")", out:"Didn't guess, offered staff"});
+  add('<span class="tag hand">No approved answer</span><p>I couldn\'t find this in EduConnect\'s approved guides, so I won\'t guess. I can pass your question to Student Services, and if it comes up a lot they can add it to the guides.</p>' + handoffCard("Student Services", "General question (not in guides)", false), "bot");
+}
+async function answer(text){
+  if (busy) return;
+  const shown = add(esc(text), "user");
+  if (/^\s*(hi|hello|hey|salam|thanks|thank you|thx|ok|okay)[\s!.]*$/i.test(text)) {
+    steps({}, {});
+    add("<p>Hey! Ask me anything general about enrolment, timetables, the learning platform, IT, the library, exams or fees.</p>", "bot"); return;
+  }
+  for (const g of GATE) if (g.re.test(text)) {
+    steps({scope:"stop", retrieve:"skip", draft:"skip", check:"skip", out:"stop"}, {scope:"Flagged: " + g.topic.toLowerCase() + ", so no AI answer", out:"Routed to " + g.team});
+    add('<span class="tag hand">Handed to staff</span><p>' + esc(g.why) + '</p>' + handoffCard(g.team, g.topic, g.urgent), "bot");
+    last = null; return;
+  }
+  let clean = text, removed = false;
+  PII.forEach(([re, rep]) => { const n = clean.replace(re, rep); if (n !== clean) { removed = true; clean = n; } });
+  if (removed) add('<span class="tag ok">Privacy</span><p>I removed what looked like personal details (an ID, email or phone number) before searching. You don\'t need them for general questions.</p>', "bot");
+
+  let hits = search(clean), qUsed = clean;
+  if (!isFound(clean, hits[0]) && last) { const q2 = last.q + " " + clean, h2 = search(q2); if (isFound(q2, h2[0])) { hits = h2; qUsed = q2; } }
+  if (!isFound(qUsed, hits[0])) { notFound(hits[0].s); last = null; return; }
+  const top = hits.filter(h => h.s >= FOUND * 0.6).slice(0, 4);
+  top.forEach((h, i) => h.c.id = "S" + (i + 1));
+
+  if (!LIVE || !sample) { offlineAnswer(top); last = { q: clean, a: top[0].c.text }; return; }
+
+  busy = true; sendBtn.disabled = true;
+  steps({scope:"pass", retrieve:"pass", draft:"run", check:"", out:""},
+    {scope:"Passed: general question" + (removed ? " (personal details removed)" : ""), retrieve:top.map(h => h.c.id + " " + h.c.doc + " §" + h.c.sec.split(".")[0]).join(" · "), draft:"Claude is drafting from " + top.length + " passage" + (top.length > 1 ? "s" : "") + "…"});
+  const thinking = add('<span class="dots">Searching the guides and drafting an answer</span>', "bot", "thinking");
+  const prompt =
+`You are the student support assistant for EduConnect, a university. Answer the student's question using ONLY the guide passages below.
+Rules:
+- If the passages answer the question, write a short, friendly answer in plain text: 1 to 4 sentences, or a short numbered list for steps. No headings, no markdown except "1." list numbers. Don't mention "passages" or "S1" in the answer text.
+- "sources": the ids of the passages you actually used.
+- "evidence": copy one short phrase (6 to 15 words) EXACTLY as written in a passage you used.
+- If the passages do not contain the answer, use status "not_in_guides" and leave answer empty. Never use outside knowledge and never guess.
+- If answering would need the student's personal record, or the question is about an appeal, complaint, health or wellbeing, use status "needs_staff".
+Reply with only this JSON: {"status":"answered"|"not_in_guides"|"needs_staff","answer":"...","sources":["S1"],"evidence":"...","staff_reason":"..."}
+` + (last ? `\nEarlier in this chat the student asked: "${last.q}" and got this answer: "${String(last.a).slice(0, 300)}". Use it only to understand follow-up questions.\n` : "") +
+`\nGuide passages:\n` + top.map(h => `[${h.c.id}] ${h.c.doc}, section ${h.c.sec} (owner: ${h.c.owner})\n${h.c.text}`).join("\n\n") +
+`\n\nStudent question: "${clean.replace(/"/g, "'")}"`;
+  let r;
+  try {
+    r = await sample.json(prompt, { modelTier:"quick" });
+  } catch (e) {
+    thinking.remove(); busy = false; sendBtn.disabled = false;
+    const code = e && e.code;
+    if (["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(code)) {
+      setMode("offline", "Claude isn't available in this view, so answers show the matching guide text directly.");
+      offlineAnswer(top, "Claude not available here, showing the guide text");
+    } else if (code === "rate_limited") {
+      add('<span class="tag hand">Busy</span><p>Too many questions in a row for the AI right now. Here\'s the guide text in the meantime, and you can try again in a bit.</p>', "bot");
+      offlineAnswer(top, "AI busy, showing the guide text");
+    } else {
+      offlineAnswer(top, "AI draft failed (" + (code || "error") + "), showing the guide text");
+    }
+    last = { q: clean, a: top[0].c.text }; return;
+  }
+  thinking.remove(); busy = false; sendBtn.disabled = false;
+  const status = r && r.status;
+  if (status === "needs_staff") {
+    steps({scope:"pass", retrieve:"pass", draft:"pass", check:"stop", out:"stop"}, {scope:"Passed the first check", retrieve:"Found " + top.length + " passage(s)", draft:"Claude flagged it as needing staff", check:"Not safe to answer automatically", out:"Routed to Student Services"});
+    add('<span class="tag hand">Handed to staff</span><p>' + esc(r.staff_reason || "This one needs a person to look at it.") + '</p>' + handoffCard("Student Services", "Needs staff review", false), "bot");
+    last = null; return;
+  }
+  if (status !== "answered" || !r.answer) { notFound(hits[0].s); last = null; return; }
+  const ids = Array.isArray(r.sources) ? r.sources.map(String) : [];
+  const used = top.filter(h => ids.includes(h.c.id)).map(h => h.c);
+  const ok = used.length > 0 && evidenceOk(r.evidence, used);
+  if (!ok) {
+    steps({scope:"pass", retrieve:"pass", draft:"pass", check:"stop", out:"pass"},
+      {scope:"Passed: general question", retrieve:"Top match: " + top[0].c.doc + " §" + top[0].c.sec.split(".")[0], draft:"Claude drafted an answer", check:"Couldn't verify the draft against a passage, so it was thrown out", out:"Showed the guide text instead"});
+    add('<span class="tag ok">From approved guide</span><span class="tag ai">AI draft failed the check</span><p>I couldn\'t verify my draft against the guide, so here\'s exactly what the guide says instead:</p><p>' + esc(top[0].c.text) + '</p><div class="srcs">' + srcCard(top[0].c) + '</div>' + feedback(), "bot");
+    last = { q: clean, a: top[0].c.text }; return;
+  }
+  steps({scope:"pass", retrieve:"pass", draft:"pass", check:"pass", out:"pass"},
+    {scope:"Passed: general question" + (removed ? " (personal details removed)" : ""), retrieve:top.map(h => h.c.id + " " + h.c.doc + " §" + h.c.sec.split(".")[0]).join(" · "),
+     draft:"Claude drafted from " + used.map(c => c.id).join(", "), check:"Cites " + used.map(c => c.id).join(", ") + " ✓ · quoted phrase found in the guide ✓", out:"Answered with source"});
+  add('<span class="tag ok">Answered from approved guide</span><span class="tag ai">Written by Claude · checked</span>' + fmt(r.answer) +
+    '<div class="srcs">' + used.map(c => srcCard(c)).join("") + '</div>' + feedback(), "bot");
+  last = { q: clean, a: r.answer };
+}
+function submit(){ const t = q.value.trim(); if (!t || busy) return; q.value = ""; answer(t); }
+sendBtn.addEventListener("click", submit);
+q.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } });
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => answer(b.dataset.q)));
+document.getElementById("staffTop").addEventListener("click", () => {
+  steps({scope:"", retrieve:"skip", draft:"skip", check:"skip", out:"stop"}, {out:"Student chose to talk to a person"});
+  add('<span class="tag hand">Talk to a person</span><p>You can always skip the assistant.</p>' + handoffCard("Student Services", "Student asked for a person", false), "bot");
+});
+log.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.fb) { b.parentElement.insertAdjacentHTML("afterend", '<div class="note">' + (b.dataset.fb === "up" ? "Thanks. In a pilot this counts toward the answer-quality measure." : "Thanks. In a pilot this would flag the guide for its owner to review. (Demo: nothing is stored.)") + "</div>"); b.parentElement.querySelectorAll("[data-fb]").forEach(x => x.disabled = true); }
+  else if (b.hasAttribute("data-staff")) document.getElementById("staffTop").click();
+  else if (b.hasAttribute("data-req")) { b.disabled = true; b.insertAdjacentHTML("afterend", '<div class="note">Demo only: no ticket was created. In an approved pilot this could open a Zendesk ticket for the right team.</div>'); }
+});
+</script>
+</body>
+</html>
