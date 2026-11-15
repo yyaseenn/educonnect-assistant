@@ -116,9 +116,35 @@ aside > p{font-size:13px;color:var(--muted);margin:0 0 12px}
 @media(max-width:900px){body{height:auto;display:block}.app{display:block}main{height:100vh;height:100dvh}aside{border-left:0;border-top:1px solid var(--line)}#log{padding:20px}.welcome h1{font-size:30px}.composer{padding:12px 16px}}
 @media(max-width:600px){.demo-banner{display:block;padding:7px 16px}.demo-banner strong{margin-right:6px}header.top{flex-direction:column;align-items:stretch;padding:12px 16px}.brand small{display:none}.brand{font-size:19px}.hdr-right{justify-content:space-between}.chips{grid-template-columns:1fr 1fr}.chip{padding:8px 10px;font-size:14px}.welcome h1{font-size:27px}#log{padding:16px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+#intro{position:fixed;inset:0;z-index:50;background:var(--cream);display:grid;place-items:center;padding:24px;transition:opacity .6s ease,visibility .6s;cursor:pointer;
+  background-image:radial-gradient(rgba(94,107,82,.13) 1px,transparent 1.2px);background-size:22px 22px}
+#intro.gone{opacity:0;visibility:hidden}
+.intro-in{text-align:center;max-width:880px}
+.intro-in .logo{width:64px;height:64px;margin:0 auto 14px;display:block;opacity:0;animation:rise .6s .1s ease forwards}
+.intro-in h1{font-family:var(--serif);font-weight:normal;font-size:40px;line-height:1.1;margin:0 0 8px;opacity:0;animation:rise .6s .3s ease forwards}
+.intro-in .tag{display:block;font-size:17px;color:var(--muted);margin:0 0 30px;background:none;padding:0;font-weight:normal;opacity:0;animation:rise .6s .55s ease forwards}
+.intro-names{list-style:none;margin:0 0 30px;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px 22px}
+.intro-names li{display:flex;align-items:center;gap:9px;font-size:17px;opacity:0;transform:translateY(10px);animation:rise .5s ease forwards}
+.intro-names .av{width:34px;height:34px;font-size:12.5px}
+.intro-start{background:var(--sage);color:#fff;border:0;border-radius:10px;padding:10px 26px;font-weight:700;font-size:15px;cursor:pointer;opacity:0;animation:rise .5s 2.1s ease forwards}
+.intro-start:hover{background:var(--sage-d)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.intro-in h1{font-size:30px}.intro-names{flex-direction:column;align-items:center}}
+@media(prefers-reduced-motion:reduce){.intro-in *, .intro-names li{opacity:1!important;transform:none!important;animation:none!important}}
 </style>
 </head>
 <body>
+<div id="intro" role="dialog" aria-label="Introduction">
+  <div class="intro-in">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 8a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H17l-7 6v-6a4 4 0 0 1-4-4z" fill="#5E6B52"/><path d="M12 11.5c2.6-1 5.4-1 8 .6v10c-2.6-1.5-5.4-1.5-8-.6zM28 11.5c-2.6-1-5.4-1-8 .6v10c2.6-1.5 5.4-1.5 8-.6z" fill="none" stroke="#F6F2EA" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    <h1>EduConnect Student Assistant</h1>
+    <span class="tag">A simple prototype made by our team</span>
+    <ul class="intro-names"><li style="animation-delay:0.90s"><span class="av" style="background:#5E6B52">Y</span>Yaseen</li><li style="animation-delay:1.12s"><span class="av" style="background:#B4573A">LB</span>Lamees Bakhit</li><li style="animation-delay:1.34s"><span class="av" style="background:#8A6A1F">LA</span>Lily Ahmed</li><li style="animation-delay:1.56s"><span class="av" style="background:#6F7F8C">GM</span>George Mousa</li><li style="animation-delay:1.78s"><span class="av" style="background:#7A5C6E">A</span>Abdulrahman</li></ul>
+    <button class="intro-start" id="introStart">Start</button>
+  </div>
+</div>
+
 <div class="demo-banner" role="note"><strong>Working prototype</strong><span id="bannerText">So basically it searches our sample guides, our AI model writes the answer from them, and the chatbot checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.</span></div>
 <div class="app">
 <main>
@@ -457,6 +483,15 @@ log.addEventListener("click", e => {
   else if (b.hasAttribute("data-staff")) document.getElementById("staffTop").click();
   else if (b.hasAttribute("data-req")) { b.disabled = true; b.insertAdjacentHTML("afterend", '<div class="note">Demo only: no ticket was created. In an approved pilot this could open a Zendesk ticket for the right team.</div>'); }
 });
+/* ---------------- Intro screen ---------------- */
+(() => {
+  const intro = document.getElementById("intro");
+  if (!intro) return;
+  const close = () => { if (intro.classList.contains("gone")) return; intro.classList.add("gone"); setTimeout(() => { intro.remove(); try { q.focus(); } catch (e) {} }, 650); };
+  intro.addEventListener("click", close);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" || e.key === "Enter") close(); }, { once:true });
+  setTimeout(close, 4200);
+})();
 </script>
 </body>
 </html>
