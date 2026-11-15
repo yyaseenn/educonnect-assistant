@@ -11,7 +11,7 @@ A working prototype of a student-support chatbot for **EduConnect**, the case co
 - If nothing relevant is found, it says so instead of guessing.
 - A side panel shows each pipeline step for every question.
 
-On this website the assistant runs in **search mode**: answers are the matching guide text. In the claude.ai version, Claude also writes the answer from the matched passages, and the page checks the answer cites and quotes a real passage before showing it.
+On this website the assistant runs in **search mode**: answers are the matching guide text with its source.
 
 ## Important
 - All guides are **fictional sample content** made for the demo. They are not real EduConnect or UOWD policy.

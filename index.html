@@ -134,7 +134,7 @@ aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
   <ol class="steps" id="steps">
     <li data-k="scope"><span class="dot">1</span><div><b>Scope &amp; privacy check</b><div class="d" data-d>Is this a general question we're allowed to answer?</div></div></li>
     <li data-k="retrieve"><span class="dot">2</span><div><b>Search approved guides</b><div class="d" data-d>Ranked search over the sample guides only</div></div></li>
-    <li data-k="draft"><span class="dot">3</span><div><b>Draft answer</b><div class="d" data-d>Claude writes from the matched passages only</div></div></li>
+    <li data-k="draft"><span class="dot">3</span><div><b>Draft answer</b><div class="d" data-d>AI writes from the matched passages only</div></div></li>
     <li data-k="check"><span class="dot">4</span><div><b>Check against source</b><div class="d" data-d>Does the answer cite and quote a real passage?</div></div></li>
     <li data-k="out"><span class="dot">5</span><div><b>Answer or hand off</b><div class="d" data-d>Reply with source, or route to staff</div></div></li>
   </ol>
@@ -146,7 +146,7 @@ aside p{font-size:13px;color:var(--muted);margin:0 0 10px}
   <div class="box">
     <h3>Not connected</h3>
     <ul><li>SharePoint / learning platforms</li><li>Zendesk ticketing</li><li>Student records</li></ul>
-    <div class="note">The CTO told us EduConnect already has Zendesk and SharePoint. Hooking them up is just our proposal and would need security and access approval first. In the real pilot the model would be the shortlisted Azure OpenAI deployment; this demo uses Claude.</div>
+    <div class="note">The CTO told us EduConnect already has Zendesk and SharePoint. Hooking them up is just our proposal and would need security and access approval first.</div>
   </div>
 </aside>
 </div>
@@ -286,7 +286,7 @@ function add(html, who, extra){
   m.innerHTML = '<div class="bubble"><div class="who">' + (who === "user" ? "You" : "EduConnect Assistant") + '</div><div class="body">' + html + "</div></div>";
   log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
 }
-const DEF = {scope:"Is this a general question we're allowed to answer?", retrieve:"Ranked search over the sample guides only", draft:"Claude writes from the matched passages only", check:"Does the answer cite and quote a real passage?", out:"Reply with source, or route to staff"};
+const DEF = {scope:"Is this a general question we're allowed to answer?", retrieve:"Ranked search over the sample guides only", draft:"AI writes from the matched passages only", check:"Does the answer cite and quote a real passage?", out:"Reply with source, or route to staff"};
 function steps(states, notes){
   document.querySelectorAll("#steps li").forEach(li => {
     const k = li.dataset.k; li.className = states[k] || "";
@@ -313,7 +313,7 @@ function setMode(m, why){
   modeEl.className = "mode " + (m === "live" ? "live" : m === "offline" ? "offline" : "");
   modeEl.textContent = m === "live" ? "● Live AI: Claude" : m === "offline" ? "● Search mode" : "Connecting…";
   if (m === "live") document.getElementById("hint").textContent = "Enter to send · Shift+Enter for a new line · The first question asks you to allow Claude: click Allow.";
-  if (m === "offline") document.getElementById("bannerText").textContent = "Website version: it really searches our sample guides and shows the matching guide text with its source. (In the claude.ai version, Claude also writes the answer.) The guides are fictional samples, and nothing's connected to real uni systems.";
+  if (m === "offline") document.getElementById("bannerText").textContent = "Searches our sample guides and shows the matching section with its source. The guides are fictional samples, not connected to real uni systems.";
   if (m === "live") document.getElementById("bannerText").textContent = "So basically it searches our sample guides, Claude writes the answer from them, and the page checks the answer against the guide before showing it. The guides are fictional samples, and nothing's connected to real uni systems.";
   if (m === "offline") document.getElementById("hint").textContent = "Enter to send · " + (why || "Search mode: answers show the matching guide text directly, with its source.");
 }
@@ -335,7 +335,7 @@ function evidenceOk(ev, passages){
 function offlineAnswer(hits, why){
   const top = hits[0].c;
   steps({scope:"pass", retrieve:"pass", draft:"skip", check:"pass", out:"pass"},
-    {scope:"Passed: general question", retrieve:"Top match: " + top.doc + " §" + top.sec.split(".")[0] + " (score " + hits[0].s.toFixed(1) + ")", draft: why || "Offline: no AI, showing the guide text itself", check:"Text comes straight from the approved guide", out:"Answered with source"});
+    {scope:"Passed: general question", retrieve:"Top match: " + top.doc + " §" + top.sec.split(".")[0] + " (score " + hits[0].s.toFixed(1) + ")", draft: why || "Search mode: showing the guide text itself", check:"Text comes straight from the approved guide", out:"Answered with source"});
   add('<span class="tag ok">From approved guide</span><span class="tag ai">Guide text, not AI-written</span><p>Here\'s what the guide says:</p><p>' + esc(top.text) + '</p><div class="srcs">' + srcCard(top) + '</div>' + feedback(), "bot");
 }
 function notFound(score){
